@@ -1,10 +1,13 @@
 import express from 'express';
 import connectDB from './config/DBConfig.js';
 import apiRouter from './routers/apiRouter.js'
+import multer from 'multer';
 
 const PORT  = 3000;
 
 const app = express();
+
+const upload = multer();
 
 app.use(express.json()); // add middleware to every request
 app.use(express.text());
