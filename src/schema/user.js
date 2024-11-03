@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-
+import mongoose from "mongoose"
+import bcrypt from "bcrypt"
 const userSchema = new mongoose.Schema({
     username:{
         type : String,
@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema({
             message: 'Invalid email format'
         }
     },
+    role:{
+        type : String,
+        default : "user",
+        enum : ["user","admin"]
+
+    },
     password:{
         type : String,
         required : true,
@@ -27,6 +33,21 @@ const userSchema = new mongoose.Schema({
     }
 },{timestamps:true});
 
-const user = mongoose.model("User",username);
+userSchema.pre('save',function modifyPassword(next) {
+    const user = this;
+
+    const SALT = bcrypt.genSaltSync(9);
+
+    // hash password
+
+    const hashedPassword = bcrypt.hashSync(user.password,SALT);
+
+    user.password = hashedPassword;
+
+    next();
+
+});
+
+const user = mongoose.model("User",userSchema);
 
 export default user;

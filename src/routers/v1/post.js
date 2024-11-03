@@ -5,16 +5,26 @@ import { createPost, deletePost, getAllPosts, updatePost } from '../../controlle
 import { cloudinaryUploader } from '../../config/multerConfig.js';
 import { validate } from './../../validators/zodValidator.js';
 import { zodPostSchema } from './../../validators/zodPostSchema.js';
+import { isAdmin, isAuthenticated } from './../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/',cloudinaryUploader.single('image'),validate(zodPostSchema),createPost);
+/**
+ * @swagger
+ * /posts:
+ *  post:
+ *      summary: Create a new post
+ *      description: Create a new post
+ * 
+ */
+
+router.post('/',isAuthenticated,cloudinaryUploader.single('image'),validate(zodPostSchema),createPost);
 
 router.get('/',getAllPosts);
 
-router.delete('/:id',deletePost);
+router.delete('/:id', isAuthenticated ,deletePost);
 
-router.put('/:id',cloudinaryUploader.single('image'),updatePost);
+router.put('/:id',isAuthenticated,isAdmin,cloudinaryUploader.single('image'),updatePost);
 
 export default router;
 

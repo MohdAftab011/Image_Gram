@@ -1,11 +1,11 @@
-import { countAllPosts, createPost, deletePostById, findAllPosts, updatePostById } from "../repositories/postRepository.js";
+import { countAllPosts, createPost, deletePostById, findAllPosts, findPostById, updatePostById } from "../repositories/postRepository.js";
 
 export const createPostService = async (createPostObject)=>{
     const caption = createPostObject.caption?.trim();
     const image = createPostObject.image;
-    // const user = createPostObejct.user; add later
+    const user = createPostObject.user; 
 
-    const post = await createPost(caption, image);
+    const post = await createPost(caption,image,user);
 
     return post;
 }
@@ -22,7 +22,15 @@ export const getAllPostService = async(offset,limit)=>{
     }
 }
 
-export const deletePostService = async(id)=>{
+export const deletePostService = async(id,user)=>{
+    const post = await findPostById(id);
+    
+    if(post.user!=user){
+        throw{
+            status : 401,
+            message : "Unauthorised"
+        }
+    }
     const response  = await deletePostById(id);
     return response;
 }
