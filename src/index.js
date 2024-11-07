@@ -6,6 +6,7 @@ import { isAuthenticated } from './middleware/authMiddleware.js';
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc from 'swagger-jsdoc'
 import { options } from './utils/swaggerOptions.js';
+import ip from 'ip'
 
 
 
@@ -30,9 +31,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use('/api',apiRouter);
 
-app.get('/ping',isAuthenticated,(req,res)=>{
+app.get('/ping',(req,res)=>{
     console.log(req.body);
-    return res.json({message: 'pong'});
+    const ipaddr = ip.address();
+    return res.json({message: 'pong' + ipaddr});
 });
 
 
